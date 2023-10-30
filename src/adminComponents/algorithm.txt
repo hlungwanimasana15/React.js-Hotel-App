@@ -1,0 +1,75 @@
+The admin side Algorithm
+
+for the Login 
+
+1.first Create a firebase project .
+2.Enable authentication: enable the authentication method i want to use (Email&password)
+3.Obtain Firebase configuration.
+4.Create a new component for the login page ( Login.js).
+5.Import necessary libraries and initialize Firebase 
+6.Define the login component and handle form inputs and login functionality.
+
+algorithm for the Login 
+//Define the login component and handle form inputs and login functionality.
+
+	
+	const Login = 
+  const email,setEmail to  useState('');
+  const password setPassword to useState('');
+
+  const handleLogin 
+
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredential) => 
+        // Successfully logged in, do something here (e.g., redirect)
+        console.log('User logged in:', userCredential.user);
+      
+      .catch((error) => 
+        // Handle login errors
+        console.error('Login error:', error.message);
+ *******************************************************************************************************
+ 
+  const [booking, setBooking] = useState({ checkin: "",checkout:""})
+  const [dates, setDates] = useState("")
+  const [roomList,setRoomList] = useState(props.roomList);
+
+  const checkAvalability = async () => {
+
+    const bookingRef = collection(db, 'booking');
+    const q = query(bookingRef, where("dates.checkin", ">=", dates.checkin || "dates.checkout", "<=", dates.checkout));
+    const querySnapshot = await getDocs(q);
+
+    console.log(querySnapshot)
+
+
+    if (querySnapshot.empty) {
+      alert("Room is available for booking")
+
+      try {
+        const roomsCollectionRef = collection(db, 'rooms',props.roomList)
+        const docSnap = await getDocs(roomsCollectionRef)
+
+        const docRef = await addDoc(collection(db, "booking"), {
+          dates: dates,
+          roomdata: docSnap.data(),
+          userData: auth.currentUser.email
+        });
+        alert('room successfully booked')
+      } catch (error) {
+
+      }
+    } else {
+      const DateMatching = [];
+      querySnapshot.forEach((doc) => {
+        DateMatching.push(doc.data().dates.checkin)
+      })
+      setBooking(DateMatching);
+      alert("Room is not available on the selected dates")
+    }
+
+  }
+
+  console.log("book", booking)       
+    
