@@ -22,11 +22,10 @@ function NavB() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to='/homeAd'>Home</Nav.Link>
-            <Nav.Link as={Link} to={"details"}>all rooms</Nav.Link>
-            <Nav.Link as={Link} to={"Create"}>Add new rooms</Nav.Link>
+            <Nav.Link as={Link} to={"/newRoom"}>Add new rooms</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">settings</NavDropdown.Item>
-              <NavDropdown.Item  as={Link} to={"Login"}>Log out</NavDropdown.Item>
+              <NavDropdown.Item  as={Link} to={"/"}>Log out</NavDropdown.Item>
               <NavDropdown.Divider />
             </NavDropdown>
           </Nav>

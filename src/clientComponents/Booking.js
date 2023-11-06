@@ -22,11 +22,35 @@ function Booking(props) {
   const selectedItem = selectedItemParam ? JSON.parse(decodeURIComponent(selectedItemParam)) : null;
 
   console.log('selecteditem',selectedItem);
+  const cardStyle = {
+    backgroundColor: '#fff',
+    border: '1px solid #e1e1e1',
+    borderRadius: '10px',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    padding: '20px',
+  };
 
+  const headingStyle = {
+    fontSize: '24px',
+    margin: '10px 0',
+  };
+
+  const subheadingStyle = {
+    fontSize: '16px',
+    margin: '5px 0',
+  };
+
+  const buttonStyle = {
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    fontSize: '18px',
+    padding: '5px 10px',
+    marginTop: '10px',
+    cursor: 'pointer',
+  };
   const [booking, setBooking] = useState("")
-
-
-
   const [selectionRange, setSelectionRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -107,9 +131,9 @@ function Booking(props) {
 
   return (
    
-    <div className="booking-container">
+    <div className="booking-container" >
     <Container className="mt-5">
-      <Card>
+      <Card style={cardStyle}>
         <Row>
           <Col lg={6}>
             <Carousel id="imageCarousel">
@@ -123,13 +147,13 @@ function Booking(props) {
           </Col>
           <Col>
             <div className="room-details">
-              <h1>{selectedItem.title}</h1>
-              <h3>Price: {selectedItem.price}</h3>
-              <h3>Location: {selectedItem.location}</h3>
-              <h3>Number of People: {selectedItem.NumberOfPeople}</h3>
-              <h3>Perks: {selectedItem.perks}</h3>
-              <h3>Number of Beds: {selectedItem.numberOfbeds}</h3>
-              <h3>Reviews: {selectedItem.reviews}</h3>
+              <h1  style={headingStyle}>{selectedItem.title}</h1>
+              <h3 style={subheadingStyle} >Price: {selectedItem.price}</h3>
+              <h3  style={subheadingStyle}>Location: {selectedItem.location}</h3>
+              <h3  style={subheadingStyle}>Number of People: {selectedItem.NumberOfPeople}</h3>
+              <h3  style={subheadingStyle}>Perks: {selectedItem.perks}</h3>
+              <h3  style={subheadingStyle}>Number of Beds: {selectedItem.numberOfbeds}</h3>
+              <h3  style={subheadingStyle}>Reviews: {selectedItem.reviews}</h3>
             </div>
           </Col>
           </Row>
@@ -142,6 +166,7 @@ function Booking(props) {
           />
 
           <Button variant="outline-secondary"
+           style={buttonStyle}
             onClick={checkAvalability}
           >Check Availability</Button>{ ' '}
         </Col>
@@ -166,46 +191,6 @@ function Booking(props) {
                   />
                   <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="4" controlId="validationCustomUsername">
-                  <Form.Label>Username</Form.Label>
-                  <InputGroup hasValidation>
-                    <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
-                    <Form.Control
-                      type="text"
-                      placeholder="Username"
-                      aria-describedby="inputGroupPrepend"
-                      required
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please choose a username.
-                    </Form.Control.Feedback>
-                  </InputGroup>
-                </Form.Group>
-              </Row>
-              <Row className="mb-3">
-                <Form.Group as={Col} md="6" controlId="validationCustom03">
-                  <Form.Label>City</Form.Label>
-                  <Form.Control type="text" placeholder="City" required />
-                  <Form.Control.Feedback type="invalid">
-                    Please provide a valid city.
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group as={Col} md="3" controlId="validationCustom04">
-                  <Form.Label>Province</Form.Label>
-                  <Form.Control type="text" placeholder="State" required />
-                  <Form.Control.Feedback type="invalid">
-                    Please provide a valid Province.
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group as={Col} md="3" controlId="validationCustom05">
-                  <Form.Label>Zip</Form.Label>
-                  <Form.Control type="text" placeholder="Zip" required />
-                  <Form.Control.Feedback type="invalid">
-                    Please provide a valid zip.
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Row>
-
               <Form.Group controlId="bookingForm">
                 <Form.Label>Number of Guests</Form.Label>
                 <Form.Control type="number" required />
@@ -218,10 +203,10 @@ function Booking(props) {
                   feedbackType="invalid"
                 />
               </Form.Group>
+             
 
-
-              <Button type="submit" variant="primary" block onClick={bookAroom}>Book Now</Button>
-
+              <Button type="submit" style={buttonStyle} variant="primary" block onClick={bookAroom}>Book Now</Button>
+              </Row>
             </Form>
         </Card>
       </Container >
