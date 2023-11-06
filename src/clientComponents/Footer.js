@@ -10,36 +10,56 @@ import { AiOutlineInstagram } from 'react-icons/ai'
 import { AiOutlineWhatsApp } from 'react-icons/ai'
 import { BsFillHouseCheckFill } from 'react-icons/bs'
 import {BsFillHouseExclamationFill } from 'react-icons/bs'
-
+import ListGroup from 'react-bootstrap/ListGroup';
 
 
 function Footer() {
-  return (
-    <Card className="text-center">
-      <Card.Header><h1>The Art Hotel</h1></Card.Header>
-      <Card.Body>
-        <Card.Title></Card.Title>
-        <Card.Text>
-          <div class="mapouter">
-            <div class="gmap_canvas">
-              <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=pretoria hatfield&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
-              </iframe><a href="https://embed-googlemap.com"></a></div>
-              </div>
-          <Container>
-            < AiOutlineTwitter />
-            < AiOutlineInstagram />
-            < AiOutlineWhatsApp />
-          </Container>
-        </Card.Text>
-       
-      </Card.Body>
-      <Card.Footer className="text-muted">
-      < BsFillHouseCheckFill />Check-in  || From 14:00 to 22:00
-      <br></br>
-      <BsFillHouseExclamationFill/>Check-out || From 06:00 to 10:00
-      </Card.Footer>
-    </Card>
 
+  const cardStyle = {
+    height: '400px',
+  };
+
+  return (
+    <Card className="bg-dark text-white" style={cardStyle}>
+    <Card.ImgOverlay>
+      <Container>
+        <Row>
+          <Col>
+            <h4>Contact Us</h4>
+            <p>123 hatfield Street</p>
+            <p>Pretoria, South Africa</p>
+            <p>Phone: +123 456 789</p>
+          </Col>
+          <Col>
+            <h4>Connect with Us</h4>
+            <Button variant="outline-light">
+              <AiOutlineTwitter /> Twitter
+            </Button>
+            <Button variant="outline-light">
+              <AiOutlineInstagram /> Instagram
+            </Button>
+            <Button variant="outline-light">
+              <AiOutlineWhatsApp /> WhatsApp
+            </Button>
+          </Col>
+          <Col>
+            <h4>Quick Links</h4>
+            <ListGroup variant="flush">
+              <ListGroup.Item>
+                <BsFillHouseCheckFill /> Home
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <BsFillHouseExclamationFill /> About Us
+              </ListGroup.Item>
+              {/* Add more links as needed */}
+            </ListGroup>
+          </Col>
+        </Row>
+      </Container>
+    </Card.ImgOverlay>
+  </Card>
+
+         
   )
 }
 

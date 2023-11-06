@@ -1,39 +1,92 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react'
+import { db } from '../config/firebase'
+import { collection, getDocs, doc } from 'firebase/firestore'
+import Button from 'react-bootstrap/esm/Button';
 import { Link } from 'react-router-dom';
-import { Card, Button } from 'react-bootstrap'; // Import Bootstrap components
+import { PiBedLight } from 'react-icons/pi'
+import { ImLocation2 } from 'react-icons/im'
+import { CiStar } from 'react-icons/ci'
+import { BsPeople } from 'react-icons/bs'
 
 function Details({ selectedItem }) {
+
+
   return (
-    <div className="details-container">
+    <div className="details-container"  style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '80vh'}}  >
       {selectedItem ? (
-        <Card>
-          <Card.Img variant="top" src={selectedItem.image} alt={selectedItem.title} />
-          <Card.Body>
-            <Card.Title>{selectedItem.title}</Card.Title>
-            <Card.Text>
-              <p>Price: {selectedItem.price}</p>
-              <p>Location: {selectedItem.location}</p>
-              <p>Number of People: {selectedItem.NumberOfPeople}</p>
-              <p>Perks: {selectedItem.perks}</p>
-              <p>Number of Beds: {selectedItem.numberOfbeds}</p>
-              <p>Reviews: {selectedItem.reviews}</p>
-            </Card.Text>
-            <Link
-              to={{
-                pathname: '/booking',
-                search: `?selectedItem=${encodeURIComponent(JSON.stringify(selectedItem))}`,
-              }}
-            >
-              <Button variant="primary">Book</Button>
-            </Link>
-          </Card.Body>
-        </Card>
+        <div className="details-content">
+          <div className="image-container">
+            <img src={selectedItem.image} alt={selectedItem.title} />
+          </div>
+          <div className="info-container">
+            <h1 className="title">{selectedItem.title}</h1>
+            <div className="property-info">
+              <div className="property-info-section">
+                <h3>Price: R{selectedItem.price} per night</h3>
+              </div>
+              <hr className="divider" />
+              <div className="property-info-section">
+                <div className="icon-container">
+                  <ImLocation2 />
+                </div>
+                <h3>Location: {selectedItem.location}</h3>
+              </div>
+              <hr className="divider" />
+              <div className="property-info-section">
+                <div className="icon-container">
+                  <BsPeople />
+                </div>
+                <h3>Accommodates: {selectedItem.NumberOfPeople} guests</h3>
+              </div>
+              <hr className="divider" />
+              <div className="property-info-section">
+                <h3>Perks: {selectedItem.perks}</h3>
+              </div>
+              <hr className="divider" />
+              <div className="property-info-section">
+                <div className="icon-container">
+                  <PiBedLight />
+                </div>
+                <h3>Number of Beds: {selectedItem.numberOfbeds}</h3>
+              </div>
+              <hr className="divider" />
+              <div className="property-info-section">
+                <div className="icon-container">
+                  <CiStar />
+                </div>
+                <h3>Reviews: {selectedItem.reviews}</h3>
+              </div>
+            </div>
+              <Link
+                to={{
+                  pathname: '/booking',
+                  search: `?selectedItem=${encodeURIComponent(JSON.stringify(selectedItem))}`,
+                }}
+                className="book-button"
+                style={{
+                  display: 'inline-block',
+                  padding: '10px 20px',
+                  backgroundColor: 'grey',
+                  color: 'white',
+                  fontSize: '16px',
+                  textDecoration: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                }}
+              >
+                Book Now
+              </Link>
+            </div>
+          </div>
       ) : (
-        <div>No item selected</div>
+        <div className="no-item-selected">No item selected</div>
       )}
     </div>
   );
 }
 
-export default Details;
+export default Details

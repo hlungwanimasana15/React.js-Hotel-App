@@ -4,7 +4,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { db } from '../config/firebase'
-import { collection, getDoc, setDoc, doc, getDocs,serverTimestamp } from 'firebase/firestore'
+import { collection, getDoc, setDoc, doc, getDocs, serverTimestamp } from 'firebase/firestore'
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DateRangePicker } from 'react-date-range';
@@ -21,36 +21,27 @@ function Booking(props) {
   const selectedItemParam = searchParams.get('selectedItem');
   const selectedItem = selectedItemParam ? JSON.parse(decodeURIComponent(selectedItemParam)) : null;
 
-  console.log('selecteditem',selectedItem);
-  const cardStyle = {
-    backgroundColor: '#fff',
-    border: '1px solid #e1e1e1',
-    borderRadius: '10px',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-    padding: '20px',
-  };
+  console.log('selecteditem', selectedItem);
 
-  const headingStyle = {
-    fontSize: '24px',
-    margin: '10px 0',
-  };
-
-  const subheadingStyle = {
-    fontSize: '16px',
-    margin: '5px 0',
-  };
-
-  const buttonStyle = {
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '18px',
-    padding: '5px 10px',
-    marginTop: '10px',
-    cursor: 'pointer',
-  };
   const [booking, setBooking] = useState("")
+
+  const [formData,setFormData] =useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    numberOfGuests: 0,
+  })
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    console.log(`Updating ${name} with value: ${value}`);
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+
   const [selectionRange, setSelectionRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -61,8 +52,8 @@ function Booking(props) {
     // This function will be called when the user selects a date range
     setSelectionRange(ranges.selection);
   };
-  
-  const bookAroom = async (e) =>{
+
+  const bookAroom = async (e) => {
     e.preventDefault()
     if (!selectedItem) {
       console.error('No selected item to book.');
@@ -75,10 +66,8 @@ function Booking(props) {
       const bookingData = {
         selectedRoom: selectedItem,
         dateRange: selectionRange,
-        
+        ...formData,
       };
-
-      // Create a reference to the booking document
       const bookingRef = doc(db, 'booking', roomId);
 
       // Set the document data
@@ -93,28 +82,41 @@ function Booking(props) {
 
 
 
-  const checkAvalability = async (e,selectionRange) => {
+  const checkAvalability = async (e, selectionRange) => {
     e.preventDefault()
-    
-    const roomId = selectedItem.userId
-    const bookingRef = doc(db, 'booking',roomId);
-    
+
+    if (!selectedItem) {
+      console.error('No selected item for availability check.');
+      return;
+    }
+  
+    const roomId = selectedItem.userId;
+    const bookingRef = doc(db, 'bookings', roomId);
+  
     try {
       const docSnapshot = await getDoc(bookingRef);
   
       if (docSnapshot.exists()) {
-        const firestoreDate = docSnapshot.data().dateRange.toDate(); 
+        const firestoreData = docSnapshot.data();
+        
+        if (firestoreData && firestoreData.dateRange) {
+          const firestoreDateRange = firestoreData.dateRange;
+          const selectedStartDate = selectionRange.startDate.toISOString();
+          const selectedEndDate = selectionRange.endDate.toISOString();
   
-        if (
-          selectionRange.startDate >= firestoreDate &&
-          selectionRange.endDate <= firestoreDate
-        ) {
-          alert('The room is available for the selected date range.');
+          if (
+            firestoreDateRange.startDate &&
+            firestoreDateRange.endDate &&
+            (selectedStartDate >= firestoreDateRange.startDate && selectedEndDate <= firestoreDateRange.endDate)
+          ) {
+            alert('The room is available for the selected date range.');
+          } else {
+            alert('The room is not available for the selected date range.');
+          }
         } else {
-          alert('The room is not available for the selected date range.');
+          alert('The date range in the Firestore document is missing or invalid.');
         }
       } else {
-        // Handle the case when the document does not exist
         alert('The room is not booked.');
       }
     } catch (error) {
@@ -130,86 +132,109 @@ function Booking(props) {
 
 
   return (
-   
-    <div className="booking-container" >
-    <Container className="mt-5">
-      <Card style={cardStyle}>
-        <Row>
-          <Col lg={6}>
-            <Carousel id="imageCarousel">
-              <Carousel.Item>
-                <Image src={selectedItem.image} alt="Image 1" className="d-block w-100" />
-              </Carousel.Item>
-              <Carousel.Item>
-                <Image src={selectedItem.image} alt="Image 2" className="d-block w-100" />
-              </Carousel.Item>
-            </Carousel>
-          </Col>
-          <Col>
-            <div className="room-details">
-              <h1  style={headingStyle}>{selectedItem.title}</h1>
-              <h3 style={subheadingStyle} >Price: {selectedItem.price}</h3>
-              <h3  style={subheadingStyle}>Location: {selectedItem.location}</h3>
-              <h3  style={subheadingStyle}>Number of People: {selectedItem.NumberOfPeople}</h3>
-              <h3  style={subheadingStyle}>Perks: {selectedItem.perks}</h3>
-              <h3  style={subheadingStyle}>Number of Beds: {selectedItem.numberOfbeds}</h3>
-              <h3  style={subheadingStyle}>Reviews: {selectedItem.reviews}</h3>
-            </div>
-          </Col>
+
+    <div className="booking-container" style={{ backgroundColor: '#8298a2', padding: '20px' }}>
+      <Container className="mt-5" style={{ backgroundColor: '#b6c3c8', padding: '20px' }}>
+        <Card>
+          <Row>
+            <Col lg={6}>
+              <Carousel id="imageCarousel">
+                <Carousel.Item>
+                  <Image src={selectedItem.image} alt="Image 1" className="d-block w-100" />
+                </Carousel.Item>
+                <Carousel.Item>
+                  <Image src={selectedItem.image} alt="Image 2" className="d-block w-100" />
+                </Carousel.Item>
+              </Carousel>
+            </Col>
+            <Col>
+              <div className="room-details">
+                <h1>{selectedItem.title}</h1>
+                <h3>Price: {selectedItem.price}</h3>
+                <h3>Location: {selectedItem.location}</h3>
+                <h3>Number of People: {selectedItem.NumberOfPeople}</h3>
+                <h3>Perks: {selectedItem.perks}</h3>
+                <h3>Number of Beds: {selectedItem.numberOfbeds}</h3>
+                <h3>Reviews: {selectedItem.reviews}</h3>
+              </div>
+            </Col>
           </Row>
-          
-      <Col>              
 
-          <DateRangePicker
-            ranges={[selectionRange]}
-            onChange={handleSelect}
-          />
+          <Col>
 
-          <Button variant="outline-secondary"
-           style={buttonStyle}
-            onClick={checkAvalability}
-          >Check Availability</Button>{ ' '}
-        </Col>
-            <Form noValidate >
-              <Row className="mb-3">
-                <Form.Group as={Col} md="4" controlId="validationCustom01">
-                  <Form.Label>First name</Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="First name"
+            <DateRangePicker
+              ranges={[selectionRange]}
+              onChange={handleSelect}
+              
+            />
 
-                  />
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group as={Col} md="4" controlId="validationCustom02">
-                  <Form.Label>Last name</Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="Last name"
-                  />
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                </Form.Group>
-              <Form.Group controlId="bookingForm">
-                <Form.Label>Number of Guests</Form.Label>
-                <Form.Control type="number" required />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Check
+            <Button variant="outline-secondary"
+              onClick={checkAvalability}
+              style={{ marginTop: '10px' }}
+            >Check Availability</Button>{' '}
+          </Col>
+          <Form noValidate  >
+            <Row className="mb-3">
+              <Form.Group as={Col} md="4" controlId="validationCustom01">
+                <Form.Label>First name</Form.Label>
+                <Form.Control
                   required
-                  label="Agree to terms and conditions"
-                  feedback="You must agree before submitting."
-                  feedbackType="invalid"
+                  type="text"
+                  placeholder="First name"
+                  value={formData.firstName}
+                  onChange={handleFormChange}
+
                 />
+                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
+              <Form.Group as={Col} md="4" controlId="validationCustom02">
+                <Form.Label>Last name</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Last name"
+                  value={formData.lastName}
+                  onChange={handleFormChange}
+                />
+                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group as={Col} md="4" controlId="validationCustomUsername">
+                <Form.Label>Username</Form.Label>
+                <InputGroup hasValidation>
+                  <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Username"
+                    aria-describedby="inputGroupPrepend"
+                    required
+                    value={formData.username}
+                  onChange={handleFormChange}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    Please choose a username.
+                  </Form.Control.Feedback>
+                </InputGroup>
+              </Form.Group>
+            </Row>
+            <Form.Group controlId="bookingForm">
+              <Form.Label>Number of Guests</Form.Label>
+              <Form.Control type="number" value={formData.numberOfGuests}
+                  onChange={handleFormChange}  required />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Check
+                required
+                label="Agree to terms and conditions"
+                feedback="You must agree before submitting."
+                feedbackType="invalid"
+              />
+            </Form.Group>
              
 
-              <Button type="submit" style={buttonStyle} variant="primary" block onClick={bookAroom}>Book Now</Button>
-              </Row>
-            </Form>
+            <Button type="submit" variant="primary"   style={{ marginTop: '10px' }} block onClick={bookAroom}>Book Now</Button>
+          </Form>
         </Card>
-      </Container >
+        </Container>
     </div>
   )
 }

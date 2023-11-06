@@ -5,7 +5,7 @@ import 'react-calendar/dist/Calendar.css';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/esm/Button';
 import Row from 'react-bootstrap/esm/Row';
-import Col from 'react-bootstrap/esm/Col';
+
 import Container from 'react-bootstrap/esm/Container';
 import { BsFillPeopleFill } from 'react-icons/bs'
 import Modal from 'react-bootstrap/Modal';
@@ -64,14 +64,32 @@ function Clientroom(filteredResults) {
 
     return (
         <>
-            <Container>
+            <Container Container style={{ backgroundColor: '#6d8792', padding: '20px' }}>
                 <div className="text-center">
                     <Row md={3}  >
                         { filter && ("")}:
                         {roomList.map((room) => (
-                            <div className='roomCont mb-3' > 
-                                <Card key={room.id} style={{ width: '25rem' }} onClick={() => handleSelect(room)} >
-                                    <img src={room.image} />
+                            <div className='roomCont mb-3'
+                                
+                            > 
+                                <Card key={room.id} 
+                                // style={{ width: '25rem' }} 
+                                style={{
+                                    width: '25rem',
+                                    // Add additional styles here as needed
+                                    margin: '10px',
+                                    padding: '10px',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '10px',
+                                    textAlign: 'center',
+                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',}}
+                                     onClick={() => handleSelect(room)} >
+                                    <img  style={{
+                      width: '100%',
+                      height: '200px',
+                      objectFit: 'cover',
+                      borderRadius: '10px',
+                    }} src={room.image} />
                                     <h1>{room.title} < BsFillPeopleFill /> </h1>
                                     <p>{room.location}</p>
                                     <p>{room.numberOfpeople}</p>
