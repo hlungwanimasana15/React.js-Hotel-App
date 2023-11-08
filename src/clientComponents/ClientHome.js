@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { collection, getDocs, doc, query, where } from 'firebase/firestore'
-import { auth, db, storage } from '../config/firebase'
+import { auth, db} from '../config/firebase'
 import cover from '../assets/view333.jpg'
 import Footer from './Footer';
 import Clientroom from './ClientRoom';
@@ -30,11 +30,17 @@ function ClientHom() {
 
   const roomsCollectionRef = collection(db, 'rooms')
 
-  const [roomList, setRoomList] = useState([]);
-
-  console.log('roomlist', roomList);
-
   const navigate = useNavigate();
+
+  const customStyles = {
+    backgroundColor: 'gray',
+  };
+  
+  const boldFontStyles = {
+    fontWeight: 'bold',
+    fontFamily: 'Arial, sans-serif', 
+    fontSize:'25px'
+  }
 
   const logOut = async () => {
 
@@ -80,7 +86,7 @@ function ClientHom() {
     <>
       <div style={{ backgroundColor: '#c7cbc9', paddingLeft: '0', paddingBottom: '0' }} >
         {[false].map((expand) => (
-          <Navbar key={expand} expand={expand} className="bg-body-tertiary mb-3">
+          <Navbar key={expand} expand={expand} className="custom-navbar bg-body-tertiary mb-3">
             <Container fluid>
               <Navbar.Brand href="#" style={{ fontFamily: "sans-serif", fontSize: "36px" }} >Grand Solace Suites</Navbar.Brand>
               <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
@@ -96,10 +102,10 @@ function ClientHom() {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                   <Nav className="justify-content-end flex-grow-1 pe-3">
-                    <Nav.Link href="/gallary">Gallary</Nav.Link>
-                    <Nav.Link href="/rest">Restuarent</Nav.Link>
+                    <Nav.Link href="/gallary"  style={boldFontStyles}>Gallary</Nav.Link>
+                    <Nav.Link href="/rest"  style={boldFontStyles} >Restuarent</Nav.Link>
                     <NavDropdown
-                      title="Dropdown"
+                      title="More"
                       id={`offcanvasNavbarDropdown-expand-${expand}`}
                     >
                       <NavDropdown.Item href="#action3" onClick={logOut}>LogOut</NavDropdown.Item>
@@ -112,15 +118,6 @@ function ClientHom() {
                       </NavDropdown.Item>
                     </NavDropdown>
                   </Nav>
-                  <Form className="dlex">
-                    <Form.Control
-                      type="search"
-                      placeholder="Search"
-                      className="me-2"
-                      aria-label="Search"
-                    />
-                    <Button variant="outline-success">Search</Button>
-                  </Form>
                 </Offcanvas.Body>
               </Navbar.Offcanvas>
             </Container>
@@ -201,7 +198,7 @@ function ClientHom() {
       </div>
 
       <div style={{ backgroundColor: '#c7cbc9' }} >
-        < Clientroom roomList={roomList} filteredResults={filteredResults} />
+        < Clientroom  filteredResults={filteredResults} />
         <br></br>
       </div>
       < Footer />

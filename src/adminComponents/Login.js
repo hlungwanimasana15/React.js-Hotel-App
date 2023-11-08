@@ -50,23 +50,22 @@ function LoginAd() {
     backgroundSize: 'cover', // You can adjust this to fit your layout
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
+    width:'70vh'
   };
-  const divButton ={
-    display: 'flex',
-    justifyContent: 'colomn', 
-    alignItems: 'center', 
-    height: '50%', 
-    padding:10
-  }
-   const buttonStyle = {
-    width: '100px', 
-    height: '40px', 
-    fontSize: '15px', 
-  };
+  
+
+ 
 
   return (
-    <div className="container mt-5" style={divStyle}>
-      <div className="row justify-content-center">
+    <div className="container mt-5"  style={{
+      backgroundColor: 'grey',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '80vh',
+      width:'80'
+    }} >
+      <div className="row justify-content-center" style={divStyle}>
         <div className="col-md-6">
           <h1 className="display-3">Welcome to Art Hotel</h1>
           <p className="lead">Plese enter your details</p>
@@ -79,15 +78,16 @@ function LoginAd() {
               <label htmlFor="password" className="form-label">Password</label>
               <input type="password" className="form-control" id="password" onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <div style={divButton}  className="row">
-              <button  style={buttonStyle} className="btn btn-primary" onClick={handleLogin}>Login</button>
-              <label htmlFor="password" className="form-label">Dont have an account Register</label>
+          
+              <button className="btn btn-primary" onClick={handleLogin}>Login</button>
+              <div >
+              <label htmlFor="password" className="form-label">Dont have an account Register</label><br></br>
               <Link to='/signup'>
-              <button style={buttonStyle} className="btn btn-secondary" >
+              <button  className="btn btn-secondary" >
                 Register
               </button>
               </Link>
-            </div>
+              </div>
 
           </form>
         </div>

@@ -1,11 +1,11 @@
 import React from 'react';
-import LoginAd from './adminComponents/LoginAd';
+import LoginAd from './adminComponents/Login';
 import { BrowserRouter as Router, Route, Routes, Navigate, BrowserRouter } from 'react-router-dom';
-import Create from './adminComponents/Create';
-import Details from './clientComponents/Details';
+import Create from './adminComponents/CreateRooms';
+import Details from './clientComponents/roomDetails';
 import NotFound from './adminComponents/NotFound';
-import HomeAd from './adminComponents/HomeAd';
-import ClientHom from './clientComponents/ClientHom';
+import HomeAd from './adminComponents/HomeAdmin';
+import ClientHom from './clientComponents/ClientHome';
 import Footer from './clientComponents/Footer';
 import Gallary from './clientComponents/Gallary';
 import Restaurents from './clientComponents/Restaurents';
@@ -23,7 +23,8 @@ const  App = ()  => {
       <Routes>
      
        <Route path="/signup" element={<SignUp />}></Route>
-        <Route path="/" element={<LoginAd />}></Route>
+        <Route path="/" element={<Navigate to="/ClientHom" />}></Route>
+        <Route path='/login' element={<LoginAd />} />
         <Route path='/newRoom' element={<Create />} />
         <Route path='/homeAd' element={<HomeAd/>} />
         <Route path='/ClientHom' element={<ClientHom />} />

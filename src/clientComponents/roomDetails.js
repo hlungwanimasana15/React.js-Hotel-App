@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react'
-import { db } from '../config/firebase'
-import { collection, getDocs, doc } from 'firebase/firestore'
-import Button from 'react-bootstrap/esm/Button';
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { PiBedLight } from 'react-icons/pi'
 import { ImLocation2 } from 'react-icons/im'
 import { CiStar } from 'react-icons/ci'
 import { BsPeople } from 'react-icons/bs'
 
+
+
 function Details({ selectedItem }) {
 
+  const [user, setUser] = useState(null);
 
   return (
-    <div className="details-container"  style={{
+    <div className="details-container" style={{
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      minHeight: '80vh'}}  >
+      minHeight: '80vh'
+    }}  >
       {selectedItem ? (
         <div className="details-content">
           <div className="image-container">
@@ -61,27 +62,28 @@ function Details({ selectedItem }) {
                 <h3>Reviews: {selectedItem.reviews}</h3>
               </div>
             </div>
-              <Link
-                to={{
-                  pathname: '/booking',
-                  search: `?selectedItem=${encodeURIComponent(JSON.stringify(selectedItem))}`,
-                }}
-                className="book-button"
-                style={{
-                  display: 'inline-block',
-                  padding: '10px 20px',
-                  backgroundColor: 'grey',
-                  color: 'white',
-                  fontSize: '16px',
-                  textDecoration: 'none',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                }}
-              >
-                Book Now
-              </Link>
-            </div>
+            <Link
+              to={{
+                pathname: '/booking',
+                search: `?selectedItem=${encodeURIComponent(JSON.stringify(selectedItem))}`,
+              }}
+              className="book-button"
+              style={{
+                display: 'inline-block',
+                padding: '10px 20px',
+                backgroundColor: 'grey',
+                color: 'white',
+                fontSize: '16px',
+                textDecoration: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+              }}
+              
+            >
+              Reserve the Suite
+            </Link>
           </div>
+        </div>
       ) : (
         <div className="no-item-selected">No item selected</div>
       )}

@@ -1,38 +1,69 @@
-import React from 'react'
-import cover from '../assets/view333.jpg'
-import A from '../assets/A.jpg'
-import B from '../assets/B.jpg'
-import C from '../assets/c.jpg'
-import R2 from '../assets/deluxe1.jpg'
-import R3 from '../assets/E.jpg'
-import food from '../assets/OIP.jpg'
-import Vzz from '../assets/R1.jpg'
-import V2 from '../assets/R2.jpg'
-import R from '../assets/R3.jpg'
-import VT from '../assets/R.jpg'
-import STA from '../assets/F.jpg'
-import ST2 from '../assets/standard.jpg'
 
+import React, { useEffect, useState } from 'react';
+import { storage } from '../config/firebase';
+import { getDownloadURL, ref, listAll } from 'firebase/storage';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Col from 'react-bootstrap/Col';
 
 function Gallary() {
-  return (
-    <div>
-        <img src={cover} />
-        <img src={A} />
-        <img src={B} />
-        <img src={C} />
-        <img src={R2} />
-        <img src={R3} />
-        <img src={food} />
-        <img src={Vzz} />
-        <img src={V2} />
-        <img src={R} />
-        <img src={VT} />
-        <img src={STA} />
-        <img src={ST2} />
-        
 
+  const [imageUpload, setImageUpload] = useState('');
+  const [imageUrl, setImageUrl] = useState([]);
+
+
+  const resizeImage = (imageFile, maxWidth, maxHeight) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(imageFile);
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const width = img.width;
+        const height = img.height;
+
+        if (width <= maxWidth && height <= maxHeight) {
+          resolve(imageFile);
+        } else {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          canvas.width = width * ratio;
+          canvas.height = height * ratio;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => {
+            resolve(new File([blob], imageFile.name, { type: imageFile.type }));
+          }, imageFile.type);
+        }
+      };
+    });
+  };
+
+  useEffect(() => {
+    const imagesListRef = ref(storage, 'hotelpictures/');
+    listAll(imagesListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageUrl((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
+
+  return (
+    <Col md={6}>
+    {imageUrl.length > 0 && (
+      <div>
+        <h1 className="gallery-heading">Image Gallery</h1>
+       <br></br>
+        <div className="image-list">
+          {imageUrl.map((url, index) => (
+            <div key={index} className="image-container">
+              <img src={url} alt={`Uploaded ${index + 1}`} />
+            </div>
+          ))}
         </div>
+      </div>
+    )}
+  </Col>
   )
 }
 

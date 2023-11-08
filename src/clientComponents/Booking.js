@@ -9,6 +9,9 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DateRangePicker } from 'react-date-range';
 import { useLocation } from 'react-router-dom';
+import { auth } from '../config/firebase';
+import { useNavigate } from 'react-router-dom/dist';
+
 
 
 
@@ -21,11 +24,11 @@ function Booking(props) {
   const selectedItemParam = searchParams.get('selectedItem');
   const selectedItem = selectedItemParam ? JSON.parse(decodeURIComponent(selectedItemParam)) : null;
 
-  console.log('selecteditem', selectedItem);
 
-  const [booking, setBooking] = useState("")
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate()
 
-  const [formData,setFormData] =useState({
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     username: '',
@@ -51,83 +54,135 @@ function Booking(props) {
   const handleSelect = (ranges) => {
     // This function will be called when the user selects a date range
     setSelectionRange(ranges.selection);
+    console.log('dfS', ranges.selection);
   };
 
   const bookAroom = async (e) => {
     e.preventDefault()
-    if (!selectedItem) {
-      console.error('No selected item to book.');
-      return;
+    console.log('user', user);
+
+    if (user) {
+      if (!selectedItem) {
+        console.error('No selected item to book.');
+        return;
+      }
+      const roomId = selectedItem.userId;
+      try {
+        const bookingData = {
+          selectedRoom: selectedItem,
+          dateRange: selectionRange,
+          ...formData,
+        };
+        const bookingRef = doc(db, 'booking', roomId);
+
+        // Set the document data
+        await setDoc(bookingRef, bookingData);
+        alert('Booking has been successful');
+      } catch (error) {
+        console.error('Error booking the room:', error);
+        alert('An error occurred while booking the room.');
+      }
+    } else {
+      alert('please login')
+      navigate('/login')
     }
 
-    const roomId = selectedItem.userId;
-
-    try {
-      const bookingData = {
-        selectedRoom: selectedItem,
-        dateRange: selectionRange,
-        ...formData,
-      };
-      const bookingRef = doc(db, 'booking', roomId);
-
-      // Set the document data
-      await setDoc(bookingRef, bookingData);
-
-      alert('Booking has been successfully recorded in Firebase.');
-    } catch (error) {
-      console.error('Error booking the room:', error);
-      alert('An error occurred while booking the room.');
-    }
   }
 
-
-
-  const checkAvalability = async (e, selectionRange) => {
+  const checkAvalability = async (e) => {
     e.preventDefault()
+
+    console.log(' selecteditem', selectedItem.id);
+
 
     if (!selectedItem) {
       console.error('No selected item for availability check.');
       return;
     }
-  
+   
     const roomId = selectedItem.userId;
-    const bookingRef = doc(db, 'bookings', roomId);
-  
+    console.log(roomId)
+
+    const bookingRef = collection(db, 'booking');
+    // const roomsRef = collection(db, 'rooms')
+
+
     try {
-      const docSnapshot = await getDoc(bookingRef);
-  
-      if (docSnapshot.exists()) {
-        const firestoreData = docSnapshot.data();
-        
+      const docSnapshot = await getDocs(bookingRef);
+      var bookings = docSnapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data()
+        }
+      })
+      console.log('bookings', bookings.id);
+
+      bookings.forEach((book) => {
+
+        const firestoreData = book;
         if (firestoreData && firestoreData.dateRange) {
           const firestoreDateRange = firestoreData.dateRange;
-          const selectedStartDate = selectionRange.startDate.toISOString();
-          const selectedEndDate = selectionRange.endDate.toISOString();
-  
+          const firestoreStartDate = new Date(convertDate(firestoreDateRange.startDate.seconds));
+          const firestoreEndDate = new Date(convertDate(firestoreDateRange.endDate.seconds));
+          const selectedStartDate = new Date(selectionRange.startDate)
+          const selectedEndDate = new Date(selectionRange.endDate)
+
+          // console.log('firestoreStartDate', firestoreStartDate,
+          //   'firestoreEndDate', firestoreEndDate,
+          //   'selectedStartDate', selectedStartDate, 'selectedEndDate', selectedEndDate);
+
+
           if (
-            firestoreDateRange.startDate &&
-            firestoreDateRange.endDate &&
-            (selectedStartDate >= firestoreDateRange.startDate && selectedEndDate <= firestoreDateRange.endDate)
+            
+            (selectedStartDate >= firestoreStartDate && selectedEndDate <= firestoreEndDate)
           ) {
-            alert('The room is available for the selected date range.');
+            console.log('room not available')
+            
           } else {
-            alert('The room is not available for the selected date range.');
+            console.log('room  available');
+    
           }
         } else {
-          alert('The date range in the Firestore document is missing or invalid.');
+          alert('The date range is invalid.');
         }
-      } else {
-        alert('The room is not booked.');
-      }
+      })
     } catch (error) {
       console.error('Error getting document:', error);
       alert('An error occurred while checking availability.');
     }
   }
 
+  function convertDate(timeS) {
+    const timestamp = timeS; // The given timestamp
+
+    // Convert the timestamp to a Date object
+    const date = new Date(timestamp * 1000);
+
+    // Format the Date object to the desired format
+    const formattedDate = date.toLocaleString('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    });
+
+    // console.log(formattedDate);
+
+    return formattedDate;
+  }
 
   useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
+    });
 
+    return () => unsubscribe();
   }, []);
 
 
@@ -140,10 +195,14 @@ function Booking(props) {
             <Col lg={6}>
               <Carousel id="imageCarousel">
                 <Carousel.Item>
-                  <Image src={selectedItem.image} alt="Image 1" className="d-block w-100" />
+                  <Image
+                    src={selectedItem.image}
+                    alt="Image 1" className="d-block w-100" />
                 </Carousel.Item>
                 <Carousel.Item>
-                  <Image src={selectedItem.image} alt="Image 2" className="d-block w-100" />
+                  <Image
+                    src={selectedItem.image}
+                    alt="Image 2" className="d-block w-100" />
                 </Carousel.Item>
               </Carousel>
             </Col>
@@ -165,11 +224,11 @@ function Booking(props) {
             <DateRangePicker
               ranges={[selectionRange]}
               onChange={handleSelect}
-              
+
             />
 
             <Button variant="outline-secondary"
-              onClick={checkAvalability}
+              onClick={(e) => checkAvalability(e)}
               style={{ marginTop: '10px' }}
             >Check Availability</Button>{' '}
           </Col>
@@ -208,7 +267,7 @@ function Booking(props) {
                     aria-describedby="inputGroupPrepend"
                     required
                     value={formData.username}
-                  onChange={handleFormChange}
+                    onChange={handleFormChange}
                   />
                   <Form.Control.Feedback type="invalid">
                     Please choose a username.
@@ -219,7 +278,7 @@ function Booking(props) {
             <Form.Group controlId="bookingForm">
               <Form.Label>Number of Guests</Form.Label>
               <Form.Control type="number" value={formData.numberOfGuests}
-                  onChange={handleFormChange}  required />
+                onChange={handleFormChange} required />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Check
@@ -229,12 +288,12 @@ function Booking(props) {
                 feedbackType="invalid"
               />
             </Form.Group>
-             
 
-            <Button type="submit" variant="primary"   style={{ marginTop: '10px' }} block onClick={bookAroom}>Book Now</Button>
+
+            <Button type="submit" variant="primary" style={{ marginTop: '10px' }} block onClick={bookAroom}>Book Now</Button>
           </Form>
         </Card>
-        </Container>
+      </Container>
     </div>
   )
 }

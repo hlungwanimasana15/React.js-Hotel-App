@@ -1,7 +1,6 @@
 import React from 'react'
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import Image from 'react-bootstrap/Image';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -46,15 +45,25 @@ function Footer() {
             <h4>Quick Links</h4>
             <ListGroup variant="flush">
               <ListGroup.Item>
-                <BsFillHouseCheckFill /> Home
+                <BsFillHouseCheckFill href='/ClientHom' /> Home
               </ListGroup.Item>
               <ListGroup.Item>
-                <BsFillHouseExclamationFill /> About Us
+                <BsFillHouseExclamationFill href='/HotelPolicy' /> About Us
               </ListGroup.Item>
-              {/* Add more links as needed */}
+             
             </ListGroup>
           </Col>
-        </Row>
+          </Row>
+          <Col>
+          <div class="mapouter">
+            <div class="gmap_canvas">
+              <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0"
+               marginwidth="0" src="https://maps.google.com/maps?width=406&amp;height=273&amp;hl=en&amp;q=pretoria&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+               <a href="https://embed-googlemap.com"></a>
+                </div>
+                </div>
+          </Col>
+       
       </Container>
     </Card.ImgOverlay>
   </Card>

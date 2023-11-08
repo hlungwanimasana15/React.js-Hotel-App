@@ -9,22 +9,22 @@ import Row from 'react-bootstrap/esm/Row';
 import Container from 'react-bootstrap/esm/Container';
 import { BsFillPeopleFill } from 'react-icons/bs'
 import Modal from 'react-bootstrap/Modal';
-import Details from './Details';
+import Details from './roomDetails';
 
 
 
 function Clientroom(filteredResults) {
- const filter = filteredResults;
+    const filter = filteredResults;
 
-   
+
     const values = [true];
     const [fullscreen, setFullscreen] = useState(true);
     const [show, setShow] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-   
+
     const handleSelect = (item) => {
         setSelectedItem(item);
-      };
+    };
     function handleShow(breakpoint) {
         setFullscreen(breakpoint);
         setShow(true);
@@ -37,7 +37,7 @@ function Clientroom(filteredResults) {
 
     const roomsCollectionRef = collection(db, 'rooms')
 
-   
+
     useEffect(() => {
         const getRooms = async () => {
             //READ THE DATA
@@ -67,29 +67,30 @@ function Clientroom(filteredResults) {
             <Container Container style={{ backgroundColor: '#6d8792', padding: '20px' }}>
                 <div className="text-center">
                     <Row md={3}  >
-                        { filter && ("")}:
+                        {filter && ("")}:
                         {roomList.map((room) => (
                             <div className='roomCont mb-3'
-                                
-                            > 
-                                <Card key={room.id} 
-                                // style={{ width: '25rem' }} 
-                                style={{
-                                    width: '25rem',
-                                    // Add additional styles here as needed
-                                    margin: '10px',
-                                    padding: '10px',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '10px',
-                                    textAlign: 'center',
-                                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',}}
-                                     onClick={() => handleSelect(room)} >
-                                    <img  style={{
-                      width: '100%',
-                      height: '200px',
-                      objectFit: 'cover',
-                      borderRadius: '10px',
-                    }} src={room.image} />
+
+                            >
+                                <Card key={room.id}
+                                    // style={{ width: '25rem' }} 
+                                    style={{
+                                        width: '25rem',
+                                        // Add additional styles here as needed
+                                        margin: '10px',
+                                        padding: '10px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '10px',
+                                        textAlign: 'center',
+                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                    }}
+                                    onClick={() => handleSelect(room)} >
+                                    <img style={{
+                                        width: '100%',
+                                        height: '200px',
+                                        objectFit: 'cover',
+                                        borderRadius: '10px',
+                                    }} src={room.image} />
                                     <h1>{room.title} < BsFillPeopleFill /> </h1>
                                     <p>{room.location}</p>
                                     <p>{room.numberOfpeople}</p>
@@ -102,22 +103,22 @@ function Clientroom(filteredResults) {
                                             View more
                                             {typeof v === 'string' && `below ${v.split('-')[0]}`}
                                         </Button>
-                                    ))}  
-                                   <Modal show={show} fullscreen={fullscreen} onHide={() => setShow(false)}>
+                                    ))}
+                                    <Modal show={show} fullscreen={fullscreen} onHide={() => setShow(false)}>
                                         <Modal.Header closeButton>
                                             <Modal.Title>Room information</Modal.Title>
                                         </Modal.Header>
                                         <Modal.Body>
-                                        
-                                           <Details  selectedItem={selectedItem} />
+
+                                            <Details selectedItem={selectedItem} />
                                         </Modal.Body>
 
                                     </Modal>
-                                </Card> 
+                                </Card>
 
-                             </div>
+                            </div>
 
-                        )) }
+                        ))}
 
                     </Row>
                 </div>
