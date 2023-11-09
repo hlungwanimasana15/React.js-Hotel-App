@@ -4,7 +4,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { db } from '../config/firebase'
-import { collection, getDoc, setDoc, doc, getDocs, serverTimestamp } from 'firebase/firestore'
+import { collection, setDoc, doc, getDocs, } from 'firebase/firestore'
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DateRangePicker } from 'react-date-range';
@@ -23,10 +23,12 @@ function Booking(props) {
   const searchParams = new URLSearchParams(location.search);
   const selectedItemParam = searchParams.get('selectedItem');
   const selectedItem = selectedItemParam ? JSON.parse(decodeURIComponent(selectedItemParam)) : null;
-
+  
+  console.log('......',selectedItem.image);
 
   const [user, setUser] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [isButtonDisabled, setButtonDisabled] = useState(false); 
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -92,21 +94,11 @@ function Booking(props) {
   const checkAvalability = async (e) => {
     e.preventDefault()
 
-    console.log(' selecteditem', selectedItem.id);
-
-
     if (!selectedItem) {
       console.error('No selected item for availability check.');
       return;
     }
-   
-    const roomId = selectedItem.userId;
-    console.log(roomId)
-
     const bookingRef = collection(db, 'booking');
-    // const roomsRef = collection(db, 'rooms')
-
-
     try {
       const docSnapshot = await getDocs(bookingRef);
       var bookings = docSnapshot.docs.map((doc) => {
@@ -118,39 +110,48 @@ function Booking(props) {
       console.log('bookings', bookings.id);
 
       bookings.forEach((book) => {
-
-        const firestoreData = book;
-        if (firestoreData && firestoreData.dateRange) {
-          const firestoreDateRange = firestoreData.dateRange;
-          const firestoreStartDate = new Date(convertDate(firestoreDateRange.startDate.seconds));
-          const firestoreEndDate = new Date(convertDate(firestoreDateRange.endDate.seconds));
-          const selectedStartDate = new Date(selectionRange.startDate)
-          const selectedEndDate = new Date(selectionRange.endDate)
-
-          // console.log('firestoreStartDate', firestoreStartDate,
-          //   'firestoreEndDate', firestoreEndDate,
-          //   'selectedStartDate', selectedStartDate, 'selectedEndDate', selectedEndDate);
-
-
-          if (
-            
-            (selectedStartDate >= firestoreStartDate && selectedEndDate <= firestoreEndDate)
-          ) {
-            console.log('room not available')
-            
-          } else {
-            console.log('room  available');
+        const roomId = selectedItem.id;
     
+
+        if (book.selectedRoom.id === roomId) {
+          const firestoreData = book;
+          if (firestoreData && firestoreData.dateRange) {
+            const firestoreDateRange = firestoreData.dateRange;
+            const firestoreStartDate = new Date(convertDate(firestoreDateRange.startDate.seconds));
+            const firestoreEndDate = new Date(convertDate(firestoreDateRange.endDate.seconds));
+            const selectedStartDate = new Date(selectionRange.startDate)
+            const selectedEndDate = new Date(selectionRange.endDate)
+            if (
+              (selectedStartDate <= firestoreEndDate  && 
+                firestoreStartDate <= selectedEndDate)
+
+            ) {
+              
+                
+              console.log('room not available')
+              setButtonDisabled(true); 
+              alert("Button has been disabled!"); 
+
+            } else {
+              console.log('room  available');
+              setButtonDisabled(false); 
+              alert("Button has been enabled!");
+            }
+          } else {
+            alert('The date range is invalid.');
           }
         } else {
-          alert('The date range is invalid.');
+          console.log('room  not found');
         }
+
+
       })
     } catch (error) {
       console.error('Error getting document:', error);
       alert('An error occurred while checking availability.');
     }
   }
+
 
   function convertDate(timeS) {
     const timestamp = timeS; // The given timestamp
@@ -196,12 +197,12 @@ function Booking(props) {
               <Carousel id="imageCarousel">
                 <Carousel.Item>
                   <Image
-                    src={selectedItem.image}
+                   src={'https://firebasestorage.googleapis.com/v0/b/hotelapp-5217b.appspot.com/o/hotelpictures%2FF.jpg0d46f8a0-c4b2-41a1-92b5-1c4446bd6685?alt=media&token=8df02f73-76ab-4cdc-b24b-2a4d137c3ac6'}
                     alt="Image 1" className="d-block w-100" />
                 </Carousel.Item>
                 <Carousel.Item>
                   <Image
-                    src={selectedItem.image}
+                   src={selectedItem.image}
                     alt="Image 2" className="d-block w-100" />
                 </Carousel.Item>
               </Carousel>
@@ -290,7 +291,7 @@ function Booking(props) {
             </Form.Group>
 
 
-            <Button type="submit" variant="primary" style={{ marginTop: '10px' }} block onClick={bookAroom}>Book Now</Button>
+            <Button type="submit" variant="primary" style={{ marginTop: '10px' }} block onClick={bookAroom} disabled={isButtonDisabled}  >Book Now</Button>
           </Form>
         </Card>
       </Container>

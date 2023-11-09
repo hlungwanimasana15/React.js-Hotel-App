@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { db } from '../config/firebase'
-import { collection, getDocs, doc } from 'firebase/firestore'
 import 'react-calendar/dist/Calendar.css';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/esm/Button';
 import Row from 'react-bootstrap/esm/Row';
-
 import Container from 'react-bootstrap/esm/Container';
 import { BsFillPeopleFill } from 'react-icons/bs'
 import Modal from 'react-bootstrap/Modal';
@@ -13,8 +10,11 @@ import Details from './roomDetails';
 
 
 
-function Clientroom(filteredResults) {
-    const filter = filteredResults;
+function Clientroom(props) {
+
+    const {roomList } = props;
+    console.log(props);
+    
 
 
     const values = [true];
@@ -31,44 +31,13 @@ function Clientroom(filteredResults) {
     }
 
 
-
-    const [roomList, setRoomList] = useState([]);
-    const [filteredRoomList, setFilteredRoomList] = useState([]);
-
-    const roomsCollectionRef = collection(db, 'rooms')
-
-
-    useEffect(() => {
-        const getRooms = async () => {
-            //READ THE DATA
-            //SET THE ROOM LIST
-            try {
-                const data = await getDocs(roomsCollectionRef)
-                const filteredData = data.docs.map((doc) => ({
-                    ...doc.data(), id: doc.id,
-                }));
-
-                setRoomList(filteredData)
-                console.log("rl", roomList);
-
-            } catch (error) {
-                console.error(error)
-            }
-
-        }
-        getRooms();
-        setFilteredRoomList(roomList);
-    }, []);
-
-    console.log(roomList);
-
     return (
         <>
             <Container Container style={{ backgroundColor: '#6d8792', padding: '20px' }}>
                 <div className="text-center">
                     <Row md={3}  >
-                        {filter && ("")}:
-                        {roomList.map((room) => (
+                         {
+                        roomList.map((room) => (
                             <div className='roomCont mb-3'
 
                             >
@@ -83,6 +52,8 @@ function Clientroom(filteredResults) {
                                         borderRadius: '10px',
                                         textAlign: 'center',
                                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                        fontFamily:'sans-serif',
+                                        fontSize:'20px'
                                     }}
                                     onClick={() => handleSelect(room)} >
                                     <img style={{

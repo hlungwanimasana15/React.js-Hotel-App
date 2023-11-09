@@ -55,6 +55,7 @@ function Footer() {
           </Col>
           </Row>
           <Col>
+          <h4>Our location</h4>
           <div class="mapouter">
             <div class="gmap_canvas">
               <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0"
@@ -62,6 +63,10 @@ function Footer() {
                <a href="https://embed-googlemap.com"></a>
                 </div>
                 </div>
+          </Col>
+          <Col>
+
+
           </Col>
        
       </Container>

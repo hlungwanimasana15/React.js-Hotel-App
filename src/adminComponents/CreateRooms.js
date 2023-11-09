@@ -135,7 +135,7 @@ function Create() {
               <Form.Group className="mb-3" controlId="formGridNumberOfBeds">
                 <Form.Label>Number Of Beds</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   onChange={(e) => SetNewNumberOfBed(e.target.value)}
                   placeholder="Number of Beds"
                 />

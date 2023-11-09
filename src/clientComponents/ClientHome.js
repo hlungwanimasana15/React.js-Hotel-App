@@ -8,8 +8,8 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import { collection, getDocs, doc, query, where } from 'firebase/firestore'
-import { auth, db} from '../config/firebase'
+import { collection, getDocs, query, where, doc } from 'firebase/firestore'
+import { auth, db } from '../config/firebase'
 import cover from '../assets/view333.jpg'
 import Footer from './Footer';
 import Clientroom from './ClientRoom';
@@ -27,19 +27,20 @@ function ClientHom() {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [filteredResults, setFilteredResults] = useState([]);
-
+  const [roomList, setRoomList] = useState([]);
   const roomsCollectionRef = collection(db, 'rooms')
-
+  const [filteredRoomList, setFilteredRoomList] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
 
   const customStyles = {
     backgroundColor: 'gray',
   };
-  
+
   const boldFontStyles = {
     fontWeight: 'bold',
-    fontFamily: 'Arial, sans-serif', 
-    fontSize:'25px'
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '25px'
   }
 
   const logOut = async () => {
@@ -68,18 +69,40 @@ function ClientHom() {
     const querySnapshot = await getDocs(q);
     const filteredData = querySnapshot.docs.map((doc) => doc.data());
 
-    console.log("filtered", filteredData);
+    // console.log("filtered", filteredData);
 
     setFilteredResults(filteredData)
+    setIsSearching(true);
   }
-
 
 
   const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
 
   useEffect(() => {
+    const getRooms = async () => {
+      //READ THE DATA
+      //SET THE ROOM LIST
+      try {
+        const data = await getDocs(roomsCollectionRef)
+        const filteredData = data.docs.map((doc) => ({
+          ...doc.data(), id: doc.id,
+        }));
 
-  },)
+        setRoomList(filteredData)
+
+
+      } catch (error) {
+        console.error(error)
+      }
+
+    }
+    getRooms();
+    setFilteredRoomList(roomList);
+  }, []);
+
+console.log(
+ 'rtys' ,filteredResults
+);
 
 
   return (
@@ -102,8 +125,8 @@ function ClientHom() {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                   <Nav className="justify-content-end flex-grow-1 pe-3">
-                    <Nav.Link href="/gallary"  style={boldFontStyles}>Gallary</Nav.Link>
-                    <Nav.Link href="/rest"  style={boldFontStyles} >Restuarent</Nav.Link>
+                    <Nav.Link href="/gallary" style={boldFontStyles}>Gallary</Nav.Link>
+                    <Nav.Link href="/rest" style={boldFontStyles} >Restuarent</Nav.Link>
                     <NavDropdown
                       title="More"
                       id={`offcanvasNavbarDropdown-expand-${expand}`}
@@ -114,7 +137,7 @@ function ClientHom() {
                       </NavDropdown.Item>
                       <NavDropdown.Divider />
                       <NavDropdown.Item href="/hotelpolicy">
-                        HotelPolicy
+                        Hotel policies
                       </NavDropdown.Item>
                     </NavDropdown>
                   </Nav>
@@ -133,7 +156,9 @@ function ClientHom() {
           fontFamily: "sans-serif"
         }}>
           <Row >
-            <h3 style={{ paddingLeft: "-100" }}>offers</h3>
+            <h3
+              style={{ justifyContent: 'center', alignItems: 'center', }}
+            >offers</h3>
             <h1>A SUITE RETREAT</h1>
           </Row>
         </Container>
@@ -198,7 +223,15 @@ function ClientHom() {
       </div>
 
       <div style={{ backgroundColor: '#c7cbc9' }} >
-        < Clientroom  filteredResults={filteredResults} />
+        {isSearching ? (
+          filteredResults.length > 0 ? (
+            <Clientroom roomList={filteredResults} />
+          ) : (
+            <p>No results found. Please adjust your search criteria.</p>
+          )
+        ) : (
+          <Clientroom roomList={roomList} />
+        )}
         <br></br>
       </div>
       < Footer />
