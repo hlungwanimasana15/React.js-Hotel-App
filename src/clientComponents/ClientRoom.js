@@ -44,8 +44,9 @@ function Clientroom(props) {
                                 <Card key={room.id}
                                     // style={{ width: '25rem' }} 
                                     style={{
+                                        height:630,
+                                        display:'flex',
                                         width: '25rem',
-                                        // Add additional styles here as needed
                                         margin: '10px',
                                         padding: '10px',
                                         border: '1px solid #ccc',
@@ -53,7 +54,8 @@ function Clientroom(props) {
                                         textAlign: 'center',
                                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                                         fontFamily:'sans-serif',
-                                        fontSize:'20px'
+                                        fontSize:'20px',
+                                        position:'relative'
                                     }}
                                     onClick={() => handleSelect(room)} >
                                     <img style={{
@@ -70,7 +72,7 @@ function Clientroom(props) {
                                     <p>{room.price}</p>
                                     <p>{room.reviews}</p>
                                     {values.map((v, idx) => (
-                                        <Button key={idx} className="me-2 mb-2" onClick={() => handleShow(v)}>
+                                        <Button key={idx} className="me-2 mb-2" style={{position:'absolute',bottom:0,width:'95%'}} onClick={() => handleShow(v)}>
                                             View more
                                             {typeof v === 'string' && `below ${v.split('-')[0]}`}
                                         </Button>

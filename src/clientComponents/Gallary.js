@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 
 function Gallary() {
 
-  const [imageUpload, setImageUpload] = useState('');
+ 
   const [imageUrl, setImageUrl] = useState([]);
 
 

@@ -8,9 +8,6 @@ import { BsPeople } from 'react-icons/bs'
 
 
 function Details({ selectedItem }) {
-
-  const [user, setUser] = useState(null);
-
   return (
     <div className="details-container" style={{
       display: 'flex',
@@ -21,7 +18,10 @@ function Details({ selectedItem }) {
       {selectedItem ? (
         <div className="details-content">
           <div className="image-container">
-            <img src={selectedItem.image} alt={selectedItem.title} />
+            <img src={selectedItem.image} a
+            lt={selectedItem.title}
+            style={{width:'360',height:'360px'}}
+            />
           </div>
           <div className="info-container">
             <h1 className="title">{selectedItem.title}</h1>
@@ -87,6 +87,8 @@ function Details({ selectedItem }) {
       ) : (
         <div className="no-item-selected">No item selected</div>
       )}
+
+    
     </div>
   );
 }

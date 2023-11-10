@@ -13,6 +13,7 @@ import Reviews from './clientComponents/Reviews';
 import HotelPolicy from './clientComponents/HotelPolicy';
 import Booking from './clientComponents/Booking';
 import SignUp from './clientComponents/SignUp';
+import Confirmation from './clientComponents/Confirmation';
 
 
 
@@ -35,6 +36,7 @@ const  App = ()  => {
         <Route path='/hotelpolicy' element={< HotelPolicy/>} />
         <Route path='/Details' element={< Details />} />
         <Route path='/booking' element={< Booking />} />
+        <Route path='/confirmation' element={<  Confirmation />} />
         <Route path='*' element={<NotFound />} />
        
       </Routes> 

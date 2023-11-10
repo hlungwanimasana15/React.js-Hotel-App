@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Image, Carousel, Button, Form, Card } from 'react-bootstrap';
-import InputGroup from 'react-bootstrap/InputGroup';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { db } from '../config/firebase'
@@ -13,39 +12,30 @@ import { auth } from '../config/firebase';
 import { useNavigate } from 'react-router-dom/dist';
 
 
-
-
-
-
 function Booking(props) {
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const selectedItemParam = searchParams.get('selectedItem');
   const selectedItem = selectedItemParam ? JSON.parse(decodeURIComponent(selectedItemParam)) : null;
+
   
-  console.log('......',selectedItem.image);
 
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const [isButtonDisabled, setButtonDisabled] = useState(false); 
+  const [isButtonDisabled, setButtonDisabled] = useState(false);
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    numberOfGuests: 0,
-  })
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
 
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    console.log(`Updating ${name} with value: ${value}`);
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    alert(`Name: ${formData.name}, Email: ${formData.email}, Message: ${formData.message}`
+    );
   };
-
 
   const [selectionRange, setSelectionRange] = useState({
     startDate: new Date(),
@@ -73,13 +63,17 @@ function Booking(props) {
         const bookingData = {
           selectedRoom: selectedItem,
           dateRange: selectionRange,
-          ...formData,
+          formData
+
         };
         const bookingRef = doc(db, 'booking', roomId);
 
         // Set the document data
         await setDoc(bookingRef, bookingData);
         alert('Booking has been successful');
+
+        navigate('/Confirmation', { state: { bookingData } });
+
       } catch (error) {
         console.error('Error booking the room:', error);
         alert('An error occurred while booking the room.');
@@ -111,7 +105,7 @@ function Booking(props) {
 
       bookings.forEach((book) => {
         const roomId = selectedItem.id;
-    
+
 
         if (book.selectedRoom.id === roomId) {
           const firestoreData = book;
@@ -122,19 +116,19 @@ function Booking(props) {
             const selectedStartDate = new Date(selectionRange.startDate)
             const selectedEndDate = new Date(selectionRange.endDate)
             if (
-              (selectedStartDate <= firestoreEndDate  && 
+              (selectedStartDate <= firestoreEndDate &&
                 firestoreStartDate <= selectedEndDate)
 
             ) {
-              
-                
+
+
               console.log('room not available')
-              setButtonDisabled(true); 
-              alert("Button has been disabled!"); 
+              setButtonDisabled(true);
+              alert("Button has been disabled!");
 
             } else {
               console.log('room  available');
-              setButtonDisabled(false); 
+              setButtonDisabled(false);
               alert("Button has been enabled!");
             }
           } else {
@@ -189,22 +183,25 @@ function Booking(props) {
 
   return (
 
-    <div className="booking-container" style={{ backgroundColor: '#8298a2', padding: '20px' }}>
-      <Container className="mt-5" style={{ backgroundColor: '#b6c3c8', padding: '20px' }}>
+    <div className="booking-container" style={{ backgroundColor: '#8298a2', padding: '10px' }}>
+      <Container className="mt-5" style={{
+        backgroundColor: '#b6c3c8', padding: '20px', fontFamily: 'sans-serif', paddingBottom: 20,
+        fontSize: '20px',
+      }}>
         <Card>
           <Row>
             <Col lg={6}>
               <Carousel id="imageCarousel">
                 <Carousel.Item>
                   <Image
-                   src={'https://firebasestorage.googleapis.com/v0/b/hotelapp-5217b.appspot.com/o/hotelpictures%2FF.jpg0d46f8a0-c4b2-41a1-92b5-1c4446bd6685?alt=media&token=8df02f73-76ab-4cdc-b24b-2a4d137c3ac6'}
+                    src={'https://firebasestorage.googleapis.com/v0/b/hotelapp-5217b.appspot.com/o/hotelpictures%2FF.jpg0d46f8a0-c4b2-41a1-92b5-1c4446bd6685?alt=media&token=8df02f73-76ab-4cdc-b24b-2a4d137c3ac6'}
                     alt="Image 1" className="d-block w-100" />
                 </Carousel.Item>
-                <Carousel.Item>
+                {/* <Carousel.Item>
                   <Image
-                   src={selectedItem.image}
+                    src={selectedItem.image}
                     alt="Image 2" className="d-block w-100" />
-                </Carousel.Item>
+                </Carousel.Item> */}
               </Carousel>
             </Col>
             <Col>
@@ -219,80 +216,74 @@ function Booking(props) {
               </div>
             </Col>
           </Row>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'flex-end', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              padding: '20px', margin: '20px', borderRadius: '8px', width: '70%'
+            }}>
+              <DateRangePicker
+                ranges={[selectionRange]}
+                onChange={handleSelect}
+                style={{
+                  backgroundColor: '#b6c3c8', fontFamily: 'sans-serif',
+                  fontSize: '15px'
+                }}
+              />
 
-          <Col>
+            </div>
 
-            <DateRangePicker
-              ranges={[selectionRange]}
-              onChange={handleSelect}
-
-            />
 
             <Button variant="outline-secondary"
               onClick={(e) => checkAvalability(e)}
-              style={{ marginTop: '10px' }}
+              style={{ marginTop: '10px', marginBottom: '20px', width: '150px' }}
             >Check Availability</Button>{' '}
-          </Col>
-          <Form noValidate  >
-            <Row className="mb-3">
-              <Form.Group as={Col} md="4" controlId="validationCustom01">
-                <Form.Label>First name</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="First name"
-                  value={formData.firstName}
-                  onChange={handleFormChange}
+          </div>
 
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustom02">
-                <Form.Label>Last name</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="Last name"
-                  value={formData.lastName}
-                  onChange={handleFormChange}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustomUsername">
-                <Form.Label>Username</Form.Label>
-                <InputGroup hasValidation>
-                  <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    placeholder="Username"
-                    aria-describedby="inputGroupPrepend"
-                    required
-                    value={formData.username}
-                    onChange={handleFormChange}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    Please choose a username.
-                  </Form.Control.Feedback>
-                </InputGroup>
-              </Form.Group>
-            </Row>
-            <Form.Group controlId="bookingForm">
-              <Form.Label>Number of Guests</Form.Label>
-              <Form.Control type="number" value={formData.numberOfGuests}
-                onChange={handleFormChange} required />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Check
-                required
-                label="Agree to terms and conditions"
-                feedback="You must agree before submitting."
-                feedbackType="invalid"
+          {/* theform  */}
+          <form  onSubmit={handleSubmit}  style={{ marginTop: '10px',padding:'20px'}} >
+            <label htmlFor="name">Name:</label>
+            <input type="text"
+              id="name" name="name"
+              value={formData.name}
+              onChange={handleChange}
+              style={{ width: '40%', padding: '8px', marginBottom: '16px', boxSizing: 'border-box', borderRadius: '4px' }}
               />
-            </Form.Group>
+              <br></br>
+            <label htmlFor="email">Email:</label>
+            <input type="email"
+              id="email" name="email"
+              value={formData.email}
+              onChange={handleChange}
+              style={{ width: '40%', padding: '8px', marginBottom: '16px', boxSizing: 'border-box', borderRadius: '4px',paddingLeft:'60px' }}
+              />
+            <br></br>
+            <label htmlFor="message">Your preferences:</label>
+            <br></br>
+            <textarea id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange} 
+              style={{ width: '45%', padding: '8px', marginBottom: '16px', boxSizing: 'border-box', borderRadius: '4px' }}
+              />
 
 
-            <Button type="submit" variant="primary" style={{ marginTop: '10px' }} block onClick={bookAroom} disabled={isButtonDisabled}  >Book Now</Button>
-          </Form>
+          </form>
+
+          <Button type="submit"
+            variant="primary"
+            style={{
+              marginTop: '40px',
+              marginBottom: 40,
+              padding: '10px',
+              width: '200px',
+              alignItems: 'center',
+              margin: 'auto',
+              display: 'block'
+            }}
+            block onClick={bookAroom}
+            disabled={isButtonDisabled}  >Book Now</Button>
+
         </Card>
       </Container>
     </div>

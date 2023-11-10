@@ -57,20 +57,14 @@ function ClientHom() {
 
   /// search function
   const SearchData = async () => {
-
     const collectRoom = roomsCollectionRef
-
     const q = query(
       collectRoom,
       where('price', '>=', parseInt(minPrice)),
       where('price', '<=', parseInt(maxPrice))
     );
-
     const querySnapshot = await getDocs(q);
     const filteredData = querySnapshot.docs.map((doc) => doc.data());
-
-    // console.log("filtered", filteredData);
-
     setFilteredResults(filteredData)
     setIsSearching(true);
   }
@@ -187,6 +181,7 @@ console.log(
           </Carousel.Item>
         </Carousel>
         <br></br>
+
         <Container>
           <Row className="my-4">
             <Col xs={12} md={6}>
@@ -198,6 +193,7 @@ console.log(
                     placeholder="Enter minimum price"
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
+                     
                   />
                 </Form.Group>
               </Form>
@@ -211,6 +207,7 @@ console.log(
                     placeholder="Enter maximum price"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
+                    
                   />
                 </Form.Group>
                 <Button variant="primary" onClick={SearchData}>
@@ -227,7 +224,7 @@ console.log(
           filteredResults.length > 0 ? (
             <Clientroom roomList={filteredResults} />
           ) : (
-            <p>No results found. Please adjust your search criteria.</p>
+            <p style={{ fontSize:'36px', alignItems:'center',padding:'80px'}}>No results found. Please adjust your search criteria.</p>
           )
         ) : (
           <Clientroom roomList={roomList} />
