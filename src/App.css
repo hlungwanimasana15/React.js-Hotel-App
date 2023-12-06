@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif&family=Playfair+Display&display=swap');
+
+*{
+  font-family: 'Playfair Display', serif;
+  font-family: 'PT Serif', serif;
+}
 .App {
   text-align: center;
 }

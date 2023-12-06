@@ -1,42 +1,42 @@
-
-import React, { useEffect, useState } from 'react';
-import { db, storage } from '../config/firebase';
-import { collection, doc, addDoc } from 'firebase/firestore';
-import { auth } from '../config/firebase';
-import { getDownloadURL, ref, listAll } from 'firebase/storage';
-import { uploadBytes } from 'firebase/storage';
-import { v4 } from 'uuid';
-import NavB from './Nav';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Container from 'react-bootstrap/Container';
-import Footer from '../clientComponents/Footer';
+import React, { useEffect, useState } from "react";
+import { db, storage } from "../config/firebase";
+import { collection, doc, addDoc } from "firebase/firestore";
+import { auth } from "../config/firebase";
+import { getDownloadURL, ref, listAll } from "firebase/storage";
+import { uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
+import NavB from "./Nav";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Container from "react-bootstrap/Container";
+import Footer from "../clientComponents/Footer";
 
 function Create() {
   // New room states
   const [roomList, setRoomList] = useState([]);
-  const imagesListRef = ref(storage, 'hotelpictures/');
-  const [imageUpload, setImageUpload] = useState('');
+  const imagesListRef = ref(storage, "hotelpictures/");
+  const [imageUpload, setImageUpload] = useState([]);
   const [imageUrl, setImageUrl] = useState([]);
-  const [NewTitle, SetNewTitle] = useState('');
-  const [NewLocation, SetNewLocation] = useState('');
-  const [NewNumberOfPeople, SetNewNumberOfPeople] = useState('');
-  const [NewNumberOfBed, SetNewNumberOfBed] = useState('');
-  const [NewPerks, SetNewPerks] = useState('');
-  const [NewPrice, SetNewPrice] = useState('');
-  const [NewReviews, SetNewReviews] = useState('');
+  const [imageUploadUrl, setImageUploadUrl] = useState([]);
+  const [NewTitle, SetNewTitle] = useState("");
+  const [NewLocation, SetNewLocation] = useState("");
+  const [NewNumberOfPeople, SetNewNumberOfPeople] = useState("");
+  const [NewNumberOfBed, SetNewNumberOfBed] = useState("");
+  const [NewPerks, SetNewPerks] = useState("");
+  const [NewPrice, SetNewPrice] = useState("");
+  const [NewReviews, SetNewReviews] = useState("");
 
   const resizeImage = (imageFile, maxWidth, maxHeight) => {
     return new Promise((resolve) => {
       const img = new Image();
       img.src = URL.createObjectURL(imageFile);
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
         const width = img.width;
         const height = img.height;
@@ -56,23 +56,32 @@ function Create() {
     });
   };
 
+  const handleFileChange = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+    setImageUpload(selectedFiles);
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
     try {
       if (imageUpload === null) return;
+      console.log(imageUpload);
+       imageUpload.forEach(async (img) => {
+        const resizedImage = await resizeImage(img, 800, 600);
 
-      const resizedImage = await resizeImage(imageUpload, 800, 600);
-
-      const imageRef = ref(storage, `hotelpictures/${resizedImage.name + v4()}`);
-      await uploadBytes(imageRef,resizedImage).then((snapshot) => {
-        getDownloadURL(snapshot.ref).then((url) => {
-          setImageUrl((prev) => [...prev, url]);
+        const imageRef = ref(
+          storage,
+          `hotelpictures/${resizedImage.name + v4()}`
+        );
+        await uploadBytes(imageRef, resizedImage).then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            setImageUploadUrl((prev) => [...prev, url]);
+          });
         });
       });
-
-      const docRef = await addDoc(collection(db, 'rooms'), {
+      // console.log("imageUploadUrl", imageUploadUrl);
+      const docRef = await addDoc(collection(db, "rooms"), {
         title: NewTitle,
         location: NewLocation,
         NumberOfPeople: NewNumberOfPeople,
@@ -80,18 +89,18 @@ function Create() {
         perks: NewPerks,
         price: NewPrice,
         reviews: NewReviews,
-        image: imageUrl,
+        image: imageUploadUrl,
         userId: auth?.currentUser.uid,
       });
 
-      alert('Added');
+      alert("Added");
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    const imagesListRef = ref(storage, 'hotelpictures/');
+    const imagesListRef = ref(storage, "hotelpictures/");
     listAll(imagesListRef).then((response) => {
       response.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
@@ -168,7 +177,7 @@ function Create() {
                 <Form.Control
                   type="file"
                   onChange={(e) => {
-                    setImageUpload(e.target.files[0]);
+                    handleFileChange(e);
                   }}
                   multiple
                 />
@@ -177,6 +186,7 @@ function Create() {
                 Submit
               </Button>
             </Form>
+            <br></br>
           </Col>
           <Col md={6}>
             {imageUrl.length > 0 && (
@@ -184,11 +194,7 @@ function Create() {
                 <h4>Uploaded Images</h4>
                 <div className="image-list">
                   {imageUrl.map((url, index) => (
-                    <img
-                      key={index}
-                      src={url}
-                      alt={`Uploaded ${index + 1}`}
-                    />
+                    <img key={index} src={url} alt={`Uploaded ${index + 1}`} />
                   ))}
                 </div>
               </div>
@@ -202,4 +208,3 @@ function Create() {
 }
 
 export default Create;
-
