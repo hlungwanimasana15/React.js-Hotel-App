@@ -35,7 +35,7 @@ function Clientroom(props) {
         <>
             <Container Container style={{ backgroundColor: '#6d8792', padding: '20px' }}>
                 <div className="text-center">
-                    <Row md={3}  >
+                    <Row xs={1}  md={2} lg={3} >
                          {
                         roomList.map((room) => (
                             <div className='roomCont mb-3'
@@ -46,7 +46,7 @@ function Clientroom(props) {
                                     style={{
                                         height:630,
                                         display:'flex',
-                                        width: '25rem',
+                                        width: '100%',
                                         margin: '10px',
                                         padding: '10px',
                                         border: '1px solid #ccc',
@@ -54,7 +54,7 @@ function Clientroom(props) {
                                         textAlign: 'center',
                                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                                         fontFamily:'sans-serif',
-                                        fontSize:'20px',
+                                        fontSize:'16px',
                                         position:'relative'
                                     }}
                                     onClick={() => handleSelect(room)} >

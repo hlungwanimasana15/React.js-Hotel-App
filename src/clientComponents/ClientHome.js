@@ -1,74 +1,66 @@
-import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Navbar from 'react-bootstrap/Navbar';
-import Carousel from 'react-bootstrap/Carousel';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
-import { collection, getDocs, query, where, doc } from 'firebase/firestore'
-import { auth, db } from '../config/firebase'
-import cover from '../assets/view333.jpg'
-import Footer from './Footer';
-import Clientroom from './ClientRoom';
-import { signOut } from 'firebase/auth';
-import { Navigate, useNavigate } from 'react-router-dom';
-import Container from 'react-bootstrap/Container';
-import Offcanvas from 'react-bootstrap/Offcanvas';
-
-
-
-
+import React, { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Nav from "react-bootstrap/Nav";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import Navbar from "react-bootstrap/Navbar";
+import Carousel from "react-bootstrap/Carousel";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import { collection, getDocs, query, where, doc } from "firebase/firestore";
+import { auth, db } from "../config/firebase";
+import cover from "../assets/view333.jpg";
+import Footer from "./Footer";
+import Clientroom from "./ClientRoom";
+import { signOut } from "firebase/auth";
+import { Navigate, useNavigate } from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Offcanvas from "react-bootstrap/Offcanvas";
 
 function ClientHom() {
 
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
   const [roomList, setRoomList] = useState([]);
-  const roomsCollectionRef = collection(db, 'rooms')
+  const roomsCollectionRef = collection(db, "rooms");
   const [filteredRoomList, setFilteredRoomList] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
 
   const customStyles = {
-    backgroundColor: 'gray',
+    backgroundColor: "gray",
   };
 
   const boldFontStyles = {
-    fontWeight: 'bold',
-    fontFamily: 'Arial, sans-serif',
-    fontSize: '25px'
-  }
+    fontWeight: "bold",
+    fontFamily: "Arial, sans-serif",
+    fontSize: "25px",
+  };
 
   const logOut = async () => {
-
     try {
-      await signOut(auth)
-      navigate('/')
+      await signOut(auth);
+      navigate("/");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-
-
+  };
 
   /// search function
   const SearchData = async () => {
-    const collectRoom = roomsCollectionRef
+    const collectRoom = roomsCollectionRef;
     const q = query(
       collectRoom,
-      where('price', '>=', parseInt(minPrice)),
-      where('price', '<=', parseInt(maxPrice))
+      where("price", ">=", parseInt(minPrice)),
+      where("price", "<=", parseInt(maxPrice))
     );
     const querySnapshot = await getDocs(q);
     const filteredData = querySnapshot.docs.map((doc) => doc.data());
-    setFilteredResults(filteredData)
+    setFilteredResults(filteredData);
     setIsSearching(true);
-  }
-
+  };
 
   const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
 
@@ -77,36 +69,49 @@ function ClientHom() {
       //READ THE DATA
       //SET THE ROOM LIST
       try {
-        const data = await getDocs(roomsCollectionRef)
+        const data = await getDocs(roomsCollectionRef);
         const filteredData = data.docs.map((doc) => ({
-          ...doc.data(), id: doc.id,
+          ...doc.data(),
+          id: doc.id,
         }));
 
-        setRoomList(filteredData)
-
-
+        setRoomList(filteredData);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-
-    }
+    };
     getRooms();
     setFilteredRoomList(roomList);
   }, []);
 
-console.log(
- 'rtys' ,filteredResults
-);
-
+  console.log("rtys", filteredResults);
 
   return (
     <>
-      <div style={{ backgroundColor: '#c7cbc9', paddingLeft: '0', paddingBottom: '0' }} >
+      <div
+        style={{
+          backgroundColor: "#c7cbc9",
+          paddingLeft: "0",
+          paddingBottom: "0",
+        }}
+      >
         {[false].map((expand) => (
-          <Navbar key={expand} expand={expand} className="custom-navbar bg-body-tertiary mb-3">
+          <Navbar
+            key={expand}
+            expand={expand}
+            className="custom-navbar bg-body-tertiary mb-3"
+           
+          >
             <Container fluid>
-              <Navbar.Brand href="#" style={{ fontFamily: "sans-serif", fontSize: "36px" }} >Grand Solace Suites</Navbar.Brand>
-              <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
+              <Navbar.Brand
+                href="#"
+                style={{ fontFamily: "sans-serif", fontSize: "36px" }}
+              >
+                Grand Solace Suites
+              </Navbar.Brand>
+              <Navbar.Toggle
+                aria-controls={`offcanvasNavbar-expand-${expand}`}
+              />
               <Navbar.Offcanvas
                 id={`offcanvasNavbar-expand-${expand}`}
                 aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
@@ -119,13 +124,19 @@ console.log(
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                   <Nav className="justify-content-end flex-grow-1 pe-3">
-                    <Nav.Link href="/gallary" style={boldFontStyles}>Gallary</Nav.Link>
-                    <Nav.Link href="/rest" style={boldFontStyles} >Restuarent</Nav.Link>
+                    <Nav.Link href="/gallary" style={boldFontStyles}>
+                      Gallary
+                    </Nav.Link>
+                    <Nav.Link href="/rest" style={boldFontStyles}>
+                      Restuarent
+                    </Nav.Link>
                     <NavDropdown
                       title="More"
                       id={`offcanvasNavbarDropdown-expand-${expand}`}
                     >
-                      <NavDropdown.Item href="#action3" onClick={logOut}>LogOut</NavDropdown.Item>
+                      <NavDropdown.Item href="#action3" onClick={logOut}>
+                        LogOut
+                      </NavDropdown.Item>
                       <NavDropdown.Item href="/review">
                         Reviews
                       </NavDropdown.Item>
@@ -139,44 +150,47 @@ console.log(
               </Navbar.Offcanvas>
             </Container>
           </Navbar>
-
         ))}
-        <Container style={{
-          marginBottom: '20px', display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '15vh',
-          //  backgroundColor: '#c7cbc9', 
-          fontFamily: "sans-serif"
-        }}>
-          <Row >
-            <h3
-              style={{ justifyContent: 'center', alignItems: 'center', }}
-            >offers</h3>
+        <Container
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "15vh",
+            //  backgroundColor: '#c7cbc9',
+            fontFamily: "sans-serif",
+          }}
+        >
+          <Row>
+            <h3 style={{ justifyContent: "center", alignItems: "center" }}>
+              offers
+            </h3>
             <h1>A SUITE RETREAT</h1>
           </Row>
         </Container>
-        <Carousel >
+        <Carousel>
           <Carousel.Item>
-            <img src={cover} style={{ width: '100%', height: '700px', padding: '10 40px', }} />
+            <img
+              src={cover}
+              style={{ width: "100%", height: "700px", padding: "10 40px" }}
+              className="img-fluid" 
+            />
             <Carousel.Caption>
-
               <p> We offer Experience</p>
             </Carousel.Caption>
           </Carousel.Item>
           <Carousel.Item>
-            <img src={cover} style={{ width: '100%', height: '700px' }} />
+            <img src={cover}  className="img-fluid"  style={{ width: "100%", height: "700px" }} />
             <Carousel.Caption>
               <p>We offer Class</p>
             </Carousel.Caption>
           </Carousel.Item>
           <Carousel.Item>
-            <img src={cover} style={{ width: '100%', height: '700px' }} />
+            <img src={cover}  className="img-fluid"  style={{ width: "100%", height: "700px" }} />
             <Carousel.Caption>
               <h1>The Art Hotel</h1>
-              <p>
-                We have it all
-              </p>
+              <p>We have it all</p>
             </Carousel.Caption>
           </Carousel.Item>
         </Carousel>
@@ -190,10 +204,9 @@ console.log(
                   <Form.Label>Minimum Price</Form.Label>
                   <Form.Control
                     type="number"
-                    placeholder="Enter minimum price"
+                    // placeholder="Enter minimum price"
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
-                     
                   />
                 </Form.Group>
               </Form>
@@ -204,37 +217,46 @@ console.log(
                   <Form.Label>Maximum Price</Form.Label>
                   <Form.Control
                     type="number"
-                    placeholder="Enter maximum price"
+                    // placeholder="Enter maximum price"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
-                    
                   />
                 </Form.Group>
-                <Button variant="primary" onClick={SearchData}>
-                  Search
-                </Button>
               </Form>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12} className="text-center mt-2">
+              <Button variant="primary" size="l" onClick={SearchData}>
+                Search
+              </Button>
             </Col>
           </Row>
         </Container>
       </div>
-
-      <div style={{ backgroundColor: '#c7cbc9' }} >
+          <br></br>
+      <div style={{ backgroundColor: "#c7cbc9" }}>
         {isSearching ? (
           filteredResults.length > 0 ? (
             <Clientroom roomList={filteredResults} />
           ) : (
-            <p style={{ fontSize:'36px', alignItems:'center',padding:'80px'}}>No results found. Please adjust your search criteria.</p>
+            <p
+              style={{
+                fontSize: "36px",
+                alignItems: "center",
+                padding: "80px",
+              }}
+            >
+              No results found. Please adjust your search criteria.
+            </p>
           )
         ) : (
           <Clientroom roomList={roomList} />
         )}
         <br></br>
       </div>
-      < Footer />
-
-
+      <Footer />
     </>
   );
 }
-export default ClientHom
+export default ClientHom;
