@@ -4,6 +4,17 @@ import { PiBedLight } from 'react-icons/pi';
 import { ImLocation2 } from 'react-icons/im';
 import { CiStar } from 'react-icons/ci';
 import { BsPeople } from 'react-icons/bs';
+import {
+  Container,
+  Row,
+  Col,
+  Image,
+  Carousel,
+  Button,
+  Form,
+  Card,
+} from "react-bootstrap";
+
 
 function Details({ selectedItem }) {
   return (
@@ -24,15 +35,22 @@ function Details({ selectedItem }) {
           }}
         >
           <div style={{ flex: 1 }}>
-            <img
-              src={selectedItem.image}
-              alt={selectedItem.title}
-              style={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: '8px',
-              }}
-            />
+          <Col xs={12} md={6}>
+            <Carousel id="imageCarousel">
+              {selectedItem &&
+                selectedItem.image &&
+                selectedItem.image.length > 0 &&
+                selectedItem.image.map((image, index) => (
+                  <Carousel.Item key={index}>
+                    <Image
+                      src={image}
+                      alt={`Room Image ${index + 1}`}
+                      className="d-block w-100"
+                    />
+                  </Carousel.Item>
+                ))}
+            </Carousel>
+          </Col>
           </div>
           <div style={{ flex: 1, padding: '20px' }}>
             <h1 style={{ fontSize: '24px', marginBottom: '10px' }}>

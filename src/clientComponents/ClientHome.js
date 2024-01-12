@@ -84,7 +84,7 @@ function ClientHom() {
     setFilteredRoomList(roomList);
   }, []);
 
-  console.log("rtys", filteredResults);
+  
 
   return (
     <>

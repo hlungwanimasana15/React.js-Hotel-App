@@ -42,7 +42,7 @@ function Clientroom(props) {
 
                             >
                                 <Card key={room.id}
-                                    // style={{ width: '25rem' }} 
+
                                     style={{
                                         height:630,
                                         display:'flex',

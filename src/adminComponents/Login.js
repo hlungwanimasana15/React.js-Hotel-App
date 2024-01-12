@@ -40,14 +40,8 @@ function LoginAd() {
     }
   };
 
-  // const divStyle = {
-  //   background: `url(${backgroundImage})`,
-  //   // backgroundSize: "cover", // You can adjust this to fit your layout
-  //   // backgroundRepeat: "no-repeat",
-  //   // backgroundPosition: "center",
-  //   width: "100%",
-  //   height:"100%"
-  // };
+  
+ 
 
   return (
     <>
@@ -55,7 +49,7 @@ function LoginAd() {
         <h1 className="display-3" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',paddingTop:'10%' }}>Welcome to Grand Solace Suites</h1>
         <p className="lead" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>Please enter your details</p>
         <form className="form-container">
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',width:'70%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',width:'50%' }}>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email
@@ -87,7 +81,7 @@ function LoginAd() {
               style={{ fontSize: "20px", width: "20%" }}
               onClick={handleLogin}
             >
-              Login
+              Sign in
             </button>
           </div>
           <div style={{ textAlign: "center", marginTop: "10px" }}>
@@ -100,7 +94,7 @@ function LoginAd() {
                 className="btn btn-secondary btn-lg"
                 style={{ fontSize: "20px", width: "20%" }}
               >
-                Register
+               Sign up
               </button>
             </Link>
           </div>

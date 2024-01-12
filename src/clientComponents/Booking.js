@@ -186,169 +186,101 @@ function Booking(props) {
   }, []);
 
   return (
-    <div
-      className="booking-container"
-      style={{ backgroundColor: "#8298a2", padding: "10px" }}
-    >
-      <Container
-        className="mt-5"
-        style={{
-          padding: "20px",
-          fontFamily: "sans-serif",
-          paddingBottom: 20,
-          fontSize: "20px",
-        }}
-      >
-        <Card>
-          <Row>
-            <Col lg={6}>
-              <Carousel id="imageCarousel">
-                {selectedItem &&
-                  selectedItem.image &&
-                  selectedItem.image.length > 0 &&
-                  selectedItem.image.map((image, index) => {
-                    console.log("Processing image:", image);
-                    return (
-                      <Carousel.Item key={index}>
-                        <Image
-                          src={image}
-                          alt={`Room Image ${index + 1}`}
-                          className="d-block w-100"
-                        />
-                      </Carousel.Item>
-                    );
-                  })}
-              </Carousel>
-            </Col>
-            <Col>
-              <div className="room-details">
-                <h1>{selectedItem.title}</h1>
-                <h3>Price: {selectedItem.price}</h3>
-                <h3>Location: {selectedItem.location}</h3>
-                <h3>Number of People: {selectedItem.NumberOfPeople}</h3>
-                <h3>Perks: {selectedItem.perks}</h3>
-                <h3>Number of Beds: {selectedItem.numberOfbeds}</h3>
-                <h3>Reviews: {selectedItem.reviews}</h3>
-              </div>
-            </Col>
-          </Row>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                padding: "20px",
-                margin: "20px",
-                borderRadius: "8px",
-                width: "70%",
-              }}
-            >
-              <DateRangePicker
-                ranges={[selectionRange]}
-                onChange={handleSelect}
-                style={{
-                  backgroundColor: "#b6c3c8",
-                  fontFamily: "sans-serif",
-                  fontSize: "15px",
-                }}
-              />
+    <div className="booking-container" style={{ backgroundColor: '#f0f0f0', padding: '20px' }}>
+    <Container>
+      <Card>
+        <Row>
+          
+          <Col xs={12} md={6}>
+            <Carousel id="imageCarousel">
+              {selectedItem &&
+                selectedItem.image &&
+                selectedItem.image.length > 0 &&
+                selectedItem.image.map((image, index) => (
+                  <Carousel.Item key={index}>
+                    <Image
+                      src={image}
+                      alt={`Room Image ${index + 1}`}
+                      className="d-block w-100"
+                    />
+                  </Carousel.Item>
+                ))}
+            </Carousel>
+          </Col>
+          <Col xs={12} md={6}>
+            <div className="room-details">
+              <h1>{selectedItem.title}</h1>
+              <h3>Price: {selectedItem.price}</h3>
+              <h3>Location: {selectedItem.location}</h3>
+              <h3>Number of People: {selectedItem.NumberOfPeople}</h3>
+              <h3>Perks: {selectedItem.perks}</h3>
+              <h3>Number of Beds: {selectedItem.numberOfbeds}</h3>
+              <h3>Reviews: {selectedItem.reviews}</h3>
             </div>
-            <Button
-              variant="outline-secondary"
-              onClick={(e) => checkAvalability(e)}
-              style={{
-                marginTop: "10px",
-                marginBottom: "20px",
-                width: "150px",
-              }}
-            >
-              Check Availability
-            </Button>{" "}
+          </Col>
+        </Row>
+        <div className="booking-section">
+          <div className="date-picker-section">
+            <DateRangePicker
+              ranges={[selectionRange]}
+              onChange={handleSelect}
+              style={{ background: '#fff', fontSize: '15px', borderRadius: '8px',zIndex: 1 }}
+            />
           </div>
-
-          {/* theform  */}
-          <form
-            onSubmit={handleSubmit}
-            style={{ marginTop: "10px", padding: "20px" }}
+          <Button
+            variant="primary"
+            onClick={checkAvalability}
+            style={{ marginTop: '10px', width: '100%' }}
           >
-            <label htmlFor="name">Name:</label>
-            <input
+            Check Availability
+          </Button>
+        </div>
+
+        <Form onSubmit={handleSubmit} className="user-preferences-form">
+          <Form.Group controlId="formName">
+            <Form.Label>Name:</Form.Label>
+            <Form.Control
               type="text"
-              id="name"
-              name="name"
+              placeholder="Enter your name"
               value={formData.name}
               onChange={handleChange}
-              style={{
-                width: "40%",
-                padding: "8px",
-                marginBottom: "16px",
-                boxSizing: "border-box",
-                borderRadius: "4px",
-              }}
             />
-            <br></br>
-            <label htmlFor="email">Email:</label>
-            <input
+          </Form.Group>
+
+          <Form.Group controlId="formEmail">
+            <Form.Label>Email:</Form.Label>
+            <Form.Control
               type="email"
-              id="email"
-              name="email"
+              placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              style={{
-                width: "40%",
-                padding: "8px",
-                marginBottom: "16px",
-                boxSizing: "border-box",
-                borderRadius: "4px",
-                paddingLeft: "60px",
-              }}
             />
-            <br></br>
-            <label htmlFor="message">Your preferences:</label>
-            <br></br>
-            <textarea
-              id="message"
-              name="message"
+          </Form.Group>
+
+          <Form.Group controlId="formMessage">
+            <Form.Label>Your preferences:</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Enter your preferences"
               value={formData.message}
               onChange={handleChange}
-              style={{
-                width: "45%",
-                padding: "8px",
-                marginBottom: "16px",
-                boxSizing: "border-box",
-                borderRadius: "4px",
-              }}
             />
-          </form>
+          </Form.Group>
 
           <Button
             type="submit"
             variant="primary"
-            style={{
-              marginTop: "40px",
-              marginBottom: 40,
-              padding: "10px",
-              width: "200px",
-              alignItems: "center",
-              margin: "auto",
-              display: "block",
-            }}
-            block
+            style={{ marginTop: '20px', width: '100%' }}
             onClick={bookAroom}
             disabled={isButtonDisabled}
           >
             Book Now
           </Button>
-        </Card>
-      </Container>
-    </div>
+        </Form>
+      </Card>
+    </Container>
+  </div>
   );
 }
 
